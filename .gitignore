@@ -27,3 +27,6 @@
 *.exe
 *.out
 *.app
+
+# Build Files (System dependent)
+build/
