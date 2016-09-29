@@ -25,7 +25,9 @@ const double v0 = -0.82548303829779446;
   * @param: v2		velocity (relaxed)
   */
 void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int method, double p1, double v1, double& p2, double& v2)
-{	
+{
+	// Remark: The parameter 'dt' is the duration of the time step, unless the analytic 
+	//         solution is requested, in which case it is the absolute time.
 	if (method == Scene::EULER) {
 		double Fg      = - m * g;
 		double Fspring = k * ((p1 - p2) - L);
@@ -34,6 +36,15 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 
 		p2 += dt * v2;
 		v2 += dt * F / m;
+	}
+	else if (method == Scene::LEAP_FROG) {
+
+	}
+	else if (method == Scene::MIDPOINT) {
+
+	}
+	else if (method == Scene::BACK_EULER) {
+
 	}
 	else if (method == Scene::ANALYTIC) {
 		double tmp = d * d - 4 * k * m;
@@ -60,21 +71,8 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 			v2 = exp(-b * dt) * (-a1 * (a + b) * exp(-a * dt) + a2 * (a - b) * exp(a * dt));
 		}
 	}
-
 	else {
-		// Remark: The parameter 'dt' is the duration of the time step, unless the analytic 
-		//         solution is requested, in which case it is the absolute time.
-		switch (method) {
-		case Scene::LEAP_FROG:
-			break;
-		case Scene::MIDPOINT:
-			break;
-		case Scene::BACK_EULER:
-			break;
-		default:
-			throw std::invalid_argument("Method chosen is invalid");
-			break;
-		}
+		throw std::invalid_argument("Method chosen is invalid");
 	}
 }
 
