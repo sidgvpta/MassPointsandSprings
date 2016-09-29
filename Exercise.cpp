@@ -8,6 +8,8 @@
 
 // Gravitational acceleration (9.81 m/s^2)
 static const double g = 9.81;
+const double x0 = -1.04509634385129060;
+const double v0 = -0.82548303829779446;
 
 // Exercise 1
 // Hanging mass point
@@ -23,31 +25,40 @@ static const double g = 9.81;
   * @param: v2		velocity (relaxed)
   */
 void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int method, double p1, double v1, double& p2, double& v2)
-{
-	const double g = 9.81;
-	
+{	
 	if (method == Scene::EULER) {
-		double l = abs(p2 - p1);
-		double Fg = m * g;
-		double Fspring = - k * (l - L) * ((p1 < p2) ? +1 : -1);
-		double Fdamp = -d * v2;
-		double F = Fg + Fspring;
+		double Fg      = - m * g;
+		double Fspring = k * ((p1 - p2) - L);
+		double Fdamp   = - d * v2;
+		double F = Fg + Fspring + Fdamp;
 
 		p2 += dt * v2;
-		v2 += dt * (F + Fdamp) / m;
+		v2 += dt * F / m;
 	}
 	else if (method == Scene::ANALYTIC) {
-		double a = (-sqrt(d*d - 4 * k*m) - d) / (2 * m);
-		double b = ( sqrt(d*d - 4 * k*m) - d) / (2 * m);
-		double c = g * m / k + L + p1;
-		const double x0 = -1.04509634385129060;
-		const double v0 = -0.82548303829779446;
-		double a2 = (v0 - a * (x0 - c)) / (b - a);
-		double a1 = (x0 - c - a2);
+		double tmp = d * d - 4 * k * m;
+		double div = 2 * m;
+		double b   = d / div;
+		double c   = -g * m / k - L + p1;
 
-		p2 = a1 * exp(a * dt)	  + a2 * exp(b * dt)	  + c;
-		v2 = a1 * exp(a * dt) * a + a2 * exp(b * dt) * b;
-		printf("x: %.3f, v: %.3f\n", p2, v2);
+		if (tmp < 0) {
+			double a  = sqrt(-tmp) / div;
+			double beta1 = x0 - c;
+			double beta2 = -(v0 + beta1 * b)/a;
+			double teta1 = v0;
+			double teta2 = b * beta2 - a * beta1;
+
+			p2 = exp(-b * dt) * (beta1 * cos(a * dt) + beta2 * sin(a * dt)) + c;
+			v2 = exp(-b * dt) * (teta1 * cos(a * dt) + teta2 * sin(a * dt));
+		}
+		else {
+			double a = sqrt(tmp) / div;
+			double a2 = v0 + (a + b) * (x0 - c);
+			double a1 = x0 - c - a2;
+
+			p2 = exp(-b * dt) * ( a1 *           exp(-a * dt) + a2 *           exp(a * dt)) + c;
+			v2 = exp(-b * dt) * (-a1 * (a + b) * exp(-a * dt) + a2 * (a - b) * exp(a * dt));
+		}
 	}
 
 	else {
