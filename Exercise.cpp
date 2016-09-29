@@ -28,13 +28,17 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 {
 	// Remark: The parameter 'dt' is the duration of the time step, unless the analytic 
 	//         solution is requested, in which case it is the absolute time.
-	if (method == Scene::EULER) {
-		double Fg      = - m * g;
-		double Fspring = k * ((p1 - p2) - L);
-		double Fdamp   = - d * v2;
-		double F = Fg + Fspring + Fdamp;
+	
+	// Calculate current forces
+	double Fg		= -m * g;
+	double Fspring	= k * ((p1 - p2) - L);
+	double Fdamp	= -d * v2;
+	double F = Fg + Fspring + Fdamp;
 
+	if (method == Scene::EULER) {
+		// new location
 		p2 += dt * v2;
+		// new velocity
 		v2 += dt * F / m;
 	}
 	else if (method == Scene::LEAP_FROG) {
@@ -51,22 +55,28 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 		double div = 2 * m;
 		double b   = d / div;
 		double c   = -g * m / k - L + p1;
-
+		// normal case:
 		if (tmp < 0) {
+			// frequency for sin(..) and cos(..)
 			double a  = sqrt(-tmp) / div;
+			// constants for x(t)
 			double beta1 = x0 - c;
 			double beta2 = -(v0 + beta1 * b)/a;
+			// constants for v(t)
 			double teta1 = v0;
 			double teta2 = b * beta2 - a * beta1;
-
+			// calculate new location and velocity
 			p2 = exp(-b * dt) * (beta1 * cos(a * dt) + beta2 * sin(a * dt)) + c;
 			v2 = exp(-b * dt) * (teta1 * cos(a * dt) + teta2 * sin(a * dt));
 		}
+		// (maybe) divergent case:
 		else {
+			// exponent for exponential function
 			double a = sqrt(tmp) / div;
+			// constants for exponentials
 			double a2 = v0 + (a + b) * (x0 - c);
 			double a1 = x0 - c - a2;
-
+			// calculate new location and velocity
 			p2 = exp(-b * dt) * ( a1 *           exp(-a * dt) + a2 *           exp(a * dt)) + c;
 			v2 = exp(-b * dt) * (-a1 * (a + b) * exp(-a * dt) + a2 * (a - b) * exp(a * dt));
 		}
