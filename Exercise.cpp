@@ -31,14 +31,14 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 	
 	// Calculate current forces
 	double Fg		= -m * g;
-	double Fspring	= k * ((p1 - p2) - L);
+	double Fspring	=  k * ((p1 - p2) - L);
 	double Fdamp	= -d * v2;
 	double F = Fg + Fspring + Fdamp;
 
 	if (method == Scene::EULER) {
-		// new location
+		// calculate new location
 		p2 += dt * v2;
-		// new velocity
+		// calculate new velocity
 		v2 += dt * F / m;
 	}
 	else if (method == Scene::LEAP_FROG) {
@@ -48,7 +48,10 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 
 	}
 	else if (method == Scene::BACK_EULER) {
-
+		// calculate new velocity
+		v2 += dt * F / m;
+		// calculate location with new velocity
+		p2 += dt * v2;
 	}
 	else if (method == Scene::ANALYTIC) {
 		double tmp = d * d - 4 * k * m;
