@@ -8,8 +8,6 @@
 
 // Gravitational acceleration (9.81 m/s^2)
 static const double g = 9.81;
-const double x0 = -1.04509634385129060;
-const double v0 = -0.82548303829779446;
 
 // Exercise 1
 // Hanging mass point
@@ -26,6 +24,9 @@ const double v0 = -0.82548303829779446;
   */
 void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int method, double p1, double v1, double& p2, double& v2)
 {
+	const static double x0 = p2;
+	const static double v0 = v2;
+
 	// Remark: The parameter 'dt' is the duration of the time step, unless the analytic 
 	//         solution is requested, in which case it is the absolute time.
 	
