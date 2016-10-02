@@ -9,6 +9,8 @@
 // Gravitational acceleration (9.81 m/s^2)
 static const double g = 9.81;
 
+#define PRINT_VALUES 1
+
 // Exercise 1
 // Hanging mass point
 /** @param: k		stiffness
@@ -26,6 +28,22 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 {
 	const static double x0 = p2;
 	const static double v0 = v2;
+#ifdef PRINT_VALUES
+	static char filename[17];
+	static FILE *file;
+	const static int err1 = sprintf(filename, "exercise1_m%d.txt", method);
+	const static int err2 = fopen_s(&file, filename, "w");
+	static int entry = 0;
+	const static double t0 = -dt;
+	static double t = -dt;
+	t = (method == Scene::ANALYTIC) ? t0 + dt : t + dt;
+	fprintf_s(file, "%f\t%f\t%f\n", t, p2, v2);
+	//printf("entry:%5d\n", entry);
+	if (t >= 40.0) {
+		fclose(file);
+		exit(0);
+	}
+#endif
 
 	// Remark: The parameter 'dt' is the duration of the time step, unless the analytic 
 	//         solution is requested, in which case it is the absolute time.
