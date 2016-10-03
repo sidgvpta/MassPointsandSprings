@@ -59,11 +59,26 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 		p2 += dt * v2;
 		// calculate new velocity
 		v2 += dt * F / m;
+		
 	}
 	else if (method == Scene::LEAP_FROG) {
 
 	}
 	else if (method == Scene::MIDPOINT) {
+		//first get to t + 1/2 and compute f(t_n+1/2,y_n+1/2) then increment p2 and v2 with that
+
+		//compute v at t + h/2
+		double a1 = F / m;
+		double k2 = v2 + dt / 2 * a1;
+
+		//compute a at t + h/2 with x and v at t + h/2 ... so (p2 + v2 * dt /2) and k2
+		F = k * (p1 - (p2 + v2 * dt / 2) - L) + Fg;
+		double a2 = ( F - d * k2 ) / m;
+
+		//calculate new location
+		p2 += dt * k2;
+		//calculate new velocity
+		v2 += dt * a2;
 
 	}
 	else if (method == Scene::BACK_EULER) {
