@@ -11,6 +11,7 @@
 #include <cstdio>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <assert.h>
 
 // Simple 2D vector class
 template<typename T>
