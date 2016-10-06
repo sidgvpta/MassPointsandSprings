@@ -47,7 +47,7 @@ Scene::Scene(void)
 Scene::Scene(int argc, char* argv[])
 {
 	//  defaults:
-	testcase = SPRING1D;
+	testcase = FALLING;
 	method = LEAP_FROG;
 	stiffness = 10.0;
 	mass = 0.1f;

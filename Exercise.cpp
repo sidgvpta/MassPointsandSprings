@@ -134,5 +134,32 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 void AdvanceTimeStep3(double k, double m, double d, double L, double dt,
                       Vec2& p1, Vec2& v1, Vec2& p2, Vec2& v2, Vec2& p3, Vec2& v3)
 {
-	p1 += Vec2(1,1);
+    p1 += Vec2(1,1);
+    p2 += Vec2(1,1);
+    p3 += Vec2(1,1);
+    
+    // mapping Vec2-type parameters to Vector2T-type for ease of calculations
+    Vector2T<Vec2> p1_local = p1;
+    Vector2T<Vec2> p2_local = p2;
+    Vector2T<Vec2> p3_local = p3;
+    Vector2T<Vec2> v1_local = v1;
+    Vector2T<Vec2> v2_local = v2;
+    Vector2T<Vec2> v3_local = v3;
+
+    // Calculate current forces
+    Vector2T<double> F_weight;
+    F_weight.x() = -m * g;
+    F_weight.y() = -m * g;
+    
+    Vector2T<double> F_spring_p1p2 =  k * ((p1 - p2) - L);
+    Vector2T<double> F_spring_p1p3 =  k * ((p1 - p2) - L);
+    Vector2T<double> F_spring_p2p3 =  k * ((p1 - p2) - L);
+    
+    Vector2T<double> F_damp_p1p2 = -d * v2;
+    Vector2T<double> F_damp_p1p3 = -d * v2;
+    Vector2T<double> F_damp_p2p3 = -d * v2;
+    
+    Vector2T<double> F_net_p1p2 = F_weight + F_spring_p1p2 + F_damp_p1p2;
+    Vector2T<double> F_net_p1p3 = F_weight + F_spring_p1p3 + F_damp_p1p3;
+    Vector2T<double> F_net_p2p3 = F_weight + F_spring_p2p3 + F_damp_p2p3;
 }
