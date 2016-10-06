@@ -10,6 +10,7 @@
 #include <math.h>
 #include <cstring>
 #include <stdio.h>
+#include "GL\glut.h"
 
 #include <iostream>
 using namespace std;
@@ -47,11 +48,11 @@ Scene::Scene(void)
 Scene::Scene(int argc, char* argv[])
 {
 	//  defaults:
-	testcase = SPRING1D;
-	method = LEAP_FROG;
+	testcase = FALLING;
+	method = ANALYTIC;
 	stiffness = 10.0;
 	mass = 0.1f;
-	step = 0.003f;
+	step = 0.005f;
 	damping = 0.01f;
 
 	int arg = 1;
@@ -343,4 +344,12 @@ void Scene::Render(void)
 
 	for (int i = 0; i < nPoints; i++)
 		points[i].render();
+
+	// Draw Ground Floor:
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glLineWidth(1);
+	glBegin(GL_LINES);
+	glVertex2i(0x7FFFFFFF, 0);
+	glVertex2i(0x80000000, 0);
+	glEnd();
 }
