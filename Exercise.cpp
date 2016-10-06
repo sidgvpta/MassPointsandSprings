@@ -37,7 +37,7 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 #ifdef WIN32
 	static FILE *file;
 	const static int err1 = sprintf(filename, "exercise1_m%d.txt", method);
-    const static int err2 = fopen(filename, "w");
+    const static int err2 = fopen_s(&file, filename, "w");
     fprintf_s(file, "%f\t%f\t%f\n", t, p2, v2);
 #elif defined(__MACH__)
     static FILE *file = fopen(filename, "w");
