@@ -10,10 +10,15 @@
 #include <math.h>
 #include <cstring>
 #include <stdio.h>
+
+#ifdef WIN32
+#include "GL\glut.h"
+#elif defined(__MACH__)
 #include <OpenGL/glu.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/OpenGL.h>
 #include <GLUT/glut.h>
+#endif
 
 #include <iostream>
 using namespace std;
