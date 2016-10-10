@@ -10,7 +10,10 @@
 #include <math.h>
 #include <cstring>
 #include <stdio.h>
-#include "GL\glut.h"
+#include <OpenGL/glu.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/OpenGL.h>
+#include <GLUT/glut.h>
 
 #include <iostream>
 using namespace std;
