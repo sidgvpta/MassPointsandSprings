@@ -4,6 +4,7 @@
 //=============================================================================
 
 #include "Utilities/Vector2T.h"
+#include "Utilities/Matrix2x2T.h"
 #include "Scene.h"
 
 // Gravitational acceleration (9.81 m/s^2)
@@ -134,5 +135,30 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 void AdvanceTimeStep3(double k, double m, double d, double L, double dt,
                       Vec2& p1, Vec2& v1, Vec2& p2, Vec2& v2, Vec2& p3, Vec2& v3)
 {
-	p1 += Vec2(1,1);
+	
+	// forces acting on p_i is sum of forces from neighboring points and sometimes from ground
+	Vec2 p[] = { p1,p2,p3 };
+	Vec2 v[] = { v1,v2,v3 };
+	for (int i = 0; i < 3; i++) {
+		Vec2 dir1 = p[i] - p[(i + 1) % 3];
+		Vec2 dir2 = p[i] - p[(i + 2) % 3];
+		Vec2 Fspring = -k * (dir1.length() - L) * dir1.normalized() - k* (dir2.length() - L) * dir2.normalized();
+		Vec2 Fg = Vec2(0, -m * g);
+		Vec2 Fdamp = -d * v[i];
+
+		Vec2 F = Fspring + Fg + Fdamp;
+
+		if (p[i].y() < -1) {
+			F += -100 * ((p[i] - Vec2(0, -1)).length()) * (p[i] - Vec2(0, -1)).normalized();
+		}
+
+		v[i] += dt * F / m;
+		p[i] += dt * v[i];
+	 }
+	p1 = p[0];
+	p2 = p[1];
+	p3 = p[2];
+	v1 = v[0];
+	v2 = v[1];
+	v3 = v[2];
 }
