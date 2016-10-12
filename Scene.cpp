@@ -11,6 +11,15 @@
 #include <cstring>
 #include <stdio.h>
 
+#ifdef WIN32
+#include "GL\glut.h"
+#elif defined(__MACH__)
+#include <OpenGL/glu.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/OpenGL.h>
+#include <GLUT/glut.h>
+#endif
+
 #include <iostream>
 using namespace std;
 
@@ -48,10 +57,10 @@ Scene::Scene(int argc, char* argv[])
 {
 	//  defaults:
 	testcase = FALLING;
-	method = LEAP_FROG;
+	method = ANALYTIC;
 	stiffness = 10.0;
 	mass = 0.1f;
-	step = 0.003f;
+	step = 0.01f;
 	damping = 0.01f;
 
 	int arg = 1;
@@ -343,4 +352,12 @@ void Scene::Render(void)
 
 	for (int i = 0; i < nPoints; i++)
 		points[i].render();
+
+	// Draw Ground Floor:
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glLineWidth(1);
+	glBegin(GL_LINES);
+	glVertex2f((float)(int)0x7FFFFFFF, -1.0/3.0);
+	glVertex2f((float)(int)0x80000000, -1.0/3.0);
+	glEnd();
 }

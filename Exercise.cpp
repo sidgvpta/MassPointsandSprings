@@ -66,27 +66,27 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 		v2 += dt * F / m;
 	}
 	else if (method == Scene::LEAP_FROG) {
-        // calculate new velocity
-        v2 += dt * F / m;
-        // calculate new location
-        p2 += dt * v2;
+		// calculate new location
+		p2 += v2 * dt + 0.5 * F / m * dt * dt;
+		// forces at next point
+		double Fspring_next = k * ((p1 - p2) - L);
+		double Fdamp_next = -d * v2;
+		double F_next = Fg + Fspring_next + Fdamp_next;
+		// calculate new velocity
+		v2 += 0.5 * ((F + F_next) / m) * dt;
 	}
 	else if (method == Scene::MIDPOINT) {
-		//first get to t + 1/2 and compute f(t_n+1/2,y_n+1/2) then increment p2 and v2 with that
-
-		//compute v at t + h/2
-		double a1 = F / m;
-		double k2 = v2 + dt / 2 * a1;
-
-		//compute a at t + h/2 with x and v at t + h/2 ... so (p2 + v2 * dt /2) and k2
-		F = k * (p1 - (p2 + v2 * dt / 2) - L) + Fg;
-		double a2 = ( F - d * k2 ) / m;
-
-		//calculate new location
-		p2 += dt * k2;
-		//calculate new velocity
-		v2 += dt * a2;
-
+		// velocity at next half point
+		double v2_half = v2 + dt * F / (2.0 * m);
+		// location of next half point
+		double p2_half = p2 + dt * v2_half / 2.0;
+		// forces at half point
+		double Fspring_half = k * ((p1 - p2_half) - L);
+		double Fdamp_half = -d * v2_half;
+		// location of next point
+		p2 += dt * v2_half;
+		// velocity of next point
+		v2 += dt * (Fg + Fspring_half + Fdamp_half) / m;
 	}
 	else if (method == Scene::BACK_EULER) {
 		// calculate new velocity
@@ -135,30 +135,61 @@ void AdvanceTimeStep1(double k, double m, double d, double L, double dt, int met
 void AdvanceTimeStep3(double k, double m, double d, double L, double dt,
                       Vec2& p1, Vec2& v1, Vec2& p2, Vec2& v2, Vec2& p3, Vec2& v3)
 {
-	
-	// forces acting on p_i is sum of forces from neighboring points and sometimes from ground
-	Vec2 p[] = { p1,p2,p3 };
-	Vec2 v[] = { v1,v2,v3 };
+	const static int bla = system("pause");
+	// Gravity Force is constant
+	const Vec2 Fg(0, -m * g);
+	// current position value copies:
+	const Vec2 pos[] = { p1, p2, p3 };
+	const Vec2 vel[] = { v1, v2, v3 };
+
+	// Compute force at each point:
 	for (int i = 0; i < 3; i++) {
-		Vec2 dir1 = p[i] - p[(i + 1) % 3];
-		Vec2 dir2 = p[i] - p[(i + 2) % 3];
-		Vec2 Fspring = -k * (dir1.length() - L) * dir1.normalized() - k* (dir2.length() - L) * dir2.normalized();
-		Vec2 Fg = Vec2(0, -m * g);
-		Vec2 Fdamp = -d * v[i];
-
-		Vec2 F = Fspring + Fg + Fdamp;
-
-		if (p[i].y() < -1) {
-			F += -100 * ((p[i] - Vec2(0, -1)).length()) * (p[i] - Vec2(0, -1)).normalized();
+		Vec2 *a, b, c, *v;
+		double penetration;
+		Vec2 penalty = 0.0;
+		// Select correct vertices
+		if (i == 0) {
+			a = &p1;
+			b = p2;
+			c = p3;
+			v = &v1;
 		}
+		else if (i == 1) {
+			a = &p2;
+			b = pos[0];
+			c = p3;
+			v = &v2;
+		}
+		else {
+			a = &p3;
+			b = pos[0];
+			c = pos[1];
+			v = &v3;
+		}
+		// Compute Forces at given point
+		Vec2 ab = (b - *a);
+		Vec2 ac = (c - *a);
+		double len_ab = ab.length();
+		double len_ac = ac.length();
+		Vec2 Fs_ab = k * (len_ab - L) * ab / len_ab;
+		Vec2 Fs_ac = k * (len_ac - L) * ac / len_ac;
+		Vec2 Fdamp = -d * *v;
+		Vec2 F = Fg + Fs_ab + Fs_ac + Fdamp;
+		// Apply penalty if needed
+		if ((penetration = a->y()) <= -1) {
+			const double bigK = 100;
+			penalty = Vec2(0.0, -bigK * (penetration + 1));
+			F += penalty;
+		}
+		// get added up Forces
+//		printf("F%d: (%f,%f)\n", i, F.x(), F.y());
+//		printf("- Fg =\t\t(%f,%f)\n- Fs_ab =\t(%f,%f)\n- Fs_ac =\t(%f,%f)\n- Fd =\t\t(%f,%f)\n- P =\t\t(%f,%f)\n",
+//			Fg, Fs_ab, Fs_ac, Fdamp, penalty);
 
-		v[i] += dt * F / m;
-		p[i] += dt * v[i];
-	 }
-	p1 = p[0];
-	p2 = p[1];
-	p3 = p[2];
-	v1 = v[0];
-	v2 = v[1];
-	v3 = v[2];
+		// Compute new Location with method BACK_EULER
+		*v += dt * F / m;
+		*a += dt * *v;
+//		printf("v: (%f,%f) -> (%f,%f)\n", vel[i], *v);
+//		printf("x: (%f,%f) -> (%f,%f)\n", pos[i], *a);
+	}
 }

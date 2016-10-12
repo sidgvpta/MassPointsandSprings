@@ -26,10 +26,16 @@ void MSpring::render()
 // render a circle using triangle fans
 void MPoint::render()
 {
+	static unsigned short counter = 0;
+	const float col[3][3] = { {1.0f, 0.0f, 0.0f}, {0.0f, 0.8f, 0.0f}, {0.0f, 0.0f, 1.0f} };
+
 	if (fixed)
 		glColor3f(0, 0, 1);
-	else
-		glColor3f(1, 0, 0);
+	else {
+		const float *color = col[(counter++) % 3];
+		glColor3f(color[0], color[1], color[2]);
+	}
+
 	glBegin(GL_TRIANGLE_FAN);
 	double mx = pos.x();
 	double my = pos.y();
