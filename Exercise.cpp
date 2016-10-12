@@ -175,9 +175,9 @@ void AdvanceTimeStep3(double k, double m, double d, double L, double dt,
 		Vec2 Fdamp = -d * *v;
 		Vec2 F = Fg + Fs_ab + Fs_ac + Fdamp;
 		// Apply penalty if needed
-		if ((penetration = a->y()) <= 0) {
+		if ((penetration = a->y()) <= -1) {
 			const double bigK = 100;
-			penalty = Vec2(0.0, -bigK * penetration);
+			penalty = Vec2(0.0, -bigK * (penetration + 1));
 			F += penalty;
 		}
 		// get added up Forces

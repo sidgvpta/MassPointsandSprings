@@ -60,7 +60,7 @@ Scene::Scene(int argc, char* argv[])
 	method = ANALYTIC;
 	stiffness = 10.0;
 	mass = 0.1f;
-	step = 0.005f;
+	step = 0.01f;
 	damping = 0.01f;
 
 	int arg = 1;
@@ -357,7 +357,7 @@ void Scene::Render(void)
 	glColor3f(0.0f, 1.0f, 0.0f);
 	glLineWidth(1);
 	glBegin(GL_LINES);
-	glVertex2i(0x7FFFFFFF, 0);
-	glVertex2i(0x80000000, 0);
+	glVertex2f((float)(int)0x7FFFFFFF, -1.0/3.0);
+	glVertex2f((float)(int)0x80000000, -1.0/3.0);
 	glEnd();
 }
