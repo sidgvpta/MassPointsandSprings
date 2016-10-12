@@ -7,18 +7,18 @@ Current Settings:
         -damp 0
 
 Max amplitude table:
-step euler 	  symplectic_euler midpoint backwards_euler analytic
-0.001 2.25774  	  2.1962 2.1962 2.1962 2
-0.002 2.80799 	  2.1962 2.1962 2.1962 2.00002
-0.004 288.054 	  2.1962 2.1962 2.19622 2.00008
-0.008 6.90578e+12 2.1962 2.1962 2.19628 2.00031
-0.016 7.60715e+53 2.1962 2.1962 2.19652 2.00125
-0.032 4.07258e+210 2.1962 2.1962 2.19748 2.00498
-0.064 inf 	  2.1962 2.1962 2.20164 2.01941
-0.128 inf         2.1962 2.1962 2.22577 2.06997
-0.256 inf         2.36403e+306 inf inf 2.18007
-0.512 inf         1.491e+307 1.491e+307 inf 2.05921
 
+step 	euler 		symplectic	midpoint	backwards 	analytic
+0.001 	2.25774 	2.1962 		2.1962 		2.1962 		2
+0.002 	2.80799 	2.1962 		2.1962 		2.1962 		2.00002
+0.004 	288.054 	2.1962 		2.1962 		2.19622 	2.00008
+0.008 	6.90578e+12 	2.1962 		2.1962 		2.19628 	2.00031
+0.016 	7.60715e+53 	2.1962 		2.1962 		2.19652 	2.00125
+0.032 	4.07258e+210 	2.1962 		2.1962 		2.19748 	2.00498
+0.064 	inf 		2.1962 		2.1962 		2.20164 	2.01941
+0.128 	inf 		2.1962 		2.1962 		2.22577 	2.06997
+0.256 	inf 		2.36403e+306 	inf 		inf 		2.18007
+0.512 	inf 		1.491e+307 	1.491e+307 	inf 		2.05921
 
 Answers to 2.3:
 
@@ -32,4 +32,3 @@ Midpoint must be inbetween. For the symplectic you can apply same reasoning.
 Repeat the experiment with a damping coefficient of 0.5: do the results change your conclusions significantly? 
 - Euler becomes more stable and might be prefered in this case over other method since it has better accuracy for step sizes <0.032
  otherwise its bettet to go with the differnet methods
-
