@@ -1,0 +1,20 @@
+Current Settings:
+        -testcase stability_measurement
+        -method analytic
+        -mass 0.1
+        -step 0.001
+        -stiff 10
+        -damp 0
+
+Max amplitude table:
+step euler symplectic_euler midpoint backwards_euler analytic
+0.001 2.25774 2.1962 2.1962 2.1962 2
+0.002 2.80799 2.1962 2.1962 2.1962 2.00002
+0.004 288.054 2.1962 2.1962 2.19622 2.00008
+0.008 6.90578e+12 2.1962 2.1962 2.19628 2.00031
+0.016 7.60715e+53 2.1962 2.1962 2.19652 2.00125
+0.032 4.07258e+210 2.1962 2.1962 2.19748 2.00498
+0.064 inf 2.1962 2.1962 2.20164 2.01941
+0.128 inf 2.1962 2.1962 2.22577 2.06997
+0.256 inf 2.36403e+306 inf inf 2.18007
+0.512 inf 1.491e+307 1.491e+307 inf 2.05921
